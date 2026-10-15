@@ -34,7 +34,7 @@ Set-Content -LiteralPath '<WORK_ROOT>\report.md' -Value $lines -Encoding UTF8
 Add-Content -LiteralPath '<WORK_ROOT>\task.log' -Value $message -Encoding UTF8
 ```
 
-- In 5.1, `-Encoding UTF8` writes UTF-8 WITH a byte order mark (BOM).
+- In 5.1, `-Encoding UTF8` writes UTF-8 WITH a byte order mark (BOM). For BOM-less UTF-8 input, also specify `Get-Content -Encoding UTF8`; default reads use the active ANSI code page when no BOM is present.
 - PowerShell 7 defaults to BOM-less UTF-8; the same script can produce different bytes on different engines - one more reason to be explicit.
 - Redirection operators (`>`) behave like `Out-File` with no parameters; use `Out-File -Encoding ...` when the byte format matters.
 
@@ -44,6 +44,8 @@ BOM-less UTF-8 when a consumer rejects BOM (.NET, clearly marked as the explicit
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText('<WORK_ROOT>\out.json', $text, $utf8NoBom)
 ```
+
+Encoding does not select line endings. If an output requires LF, join lines explicitly with ``"`n"`` and write that string through the .NET writer; `Set-Content` line-array output normally uses Windows line endings. Non-ASCII PowerShell 5.1 script source needs a detectable encoding (commonly a UTF-8 BOM); ASCII-only source avoids that ambiguity.
 
 Practical tip: JSON written by 5.1 (`ConvertTo-Json | Set-Content -Encoding UTF8`) carries a BOM that python `json.loads` rejects when read as plain `utf-8`. Either write BOM-less via .NET, or have Python readers use `encoding='utf-8-sig'` (tolerates BOM presence and absence).
 

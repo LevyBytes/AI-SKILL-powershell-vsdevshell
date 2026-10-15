@@ -37,7 +37,7 @@ Precedence gotcha: unary `-join "a","b"` joins only `"a"`; parenthesize: `-join 
 Comparison operators FILTER arrays instead of returning a Boolean when the left side is an array. That is why null checks put `$null` on the left:
 
 ```powershell
-if ($null -eq $value) { ... }      # correct even when $value is an array
+if ($null -eq $value) { Write-Output 'No value' } # $value is supplied by the caller
 ```
 
 ## Hashtables

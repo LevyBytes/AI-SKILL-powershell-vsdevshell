@@ -18,7 +18,7 @@ $py = @(
 Set-Content -LiteralPath '<WORK_ROOT>\generated.py' -Value $py -Encoding UTF8
 ```
 
-Single quotes INSIDE a Python line are written by doubling them (`'it''s'`). Keep one Python statement per array element; never build Python from interpolated double-quoted PowerShell strings.
+Double a single quote for the PowerShell string layer; it then appears once in the generated text. The resulting Python still needs valid Python quoting. For example, the PowerShell literal `'print("it''s ready")'` produces valid Python `print("it's ready")`. Preserve indentation and line boundaries for compound statements; do not interpolate data into source.
 
 ## Injecting values safely
 
@@ -28,7 +28,7 @@ Never interpolate values into Python source. In order of preference:
 2. A JSON input file written by PowerShell and read by Python (`encoding='utf-8-sig'` tolerates the 5.1 BOM - practical tip).
 3. Environment variables: `$Env:JOB_INPUT = $inputPath` then `os.environ['JOB_INPUT']`.
 
-If interpolation is truly unavoidable, use `-f` format strings into single-quoted templates and validate the result file immediately.
+`-f` formatting is still source interpolation; it does not escape arbitrary values for Python. Keep source fixed and pass data through the documented input channel. PowerShell 5.1 native argument serialization can alter quotes or empty values, so JSON input is preferable for arbitrary text.
 
 ## Validation and invocation
 
@@ -38,17 +38,20 @@ if ($LASTEXITCODE -ne 0) { throw ('py_compile failed: {0}' -f $LASTEXITCODE) }
 
 & '<TOOLS_ROOT>\python.exe' '<WORK_ROOT>\generated.py' '<WORK_ROOT>\job-config.json'
 $exitCode = $LASTEXITCODE
+if ($exitCode -ne 0) { throw ('Generated job failed: {0}' -f $exitCode) }
 ```
 
 - `python -m py_compile <file>` exits nonzero when any file fails to compile - a cheap syntax gate with no side effects beyond `__pycache__`.
-- Python exit codes: 1 for uncaught exceptions, 2 for usage errors. Judge by exit code, not by stderr presence.
-- For console-encoding issues on Windows, `PYTHONIOENCODING` or `python -X utf8` are the controls to use.
+- Python commonly exits 1 for uncaught exceptions and 2 for command-line usage errors; a script can define other codes. Check the job contract and process-start failures too.
+- For redirected Python standard streams, set `PYTHONIOENCODING=utf-8` and configure the reader for UTF-8 too. Modern Windows console buffers have separate handling; do not treat that environment variable as a universal console switch.
 
 ## Encoding both directions
 
 - PowerShell 5.1 `Set-Content -Encoding UTF8` writes a BOM. Python source files tolerate a UTF-8 BOM, and readers should use `utf-8-sig` for data files PowerShell wrote.
-- Files Python writes with plain `utf-8` have no BOM; PowerShell reads them fine with `Get-Content`.
-- Use the BOM-less .NET writer (see `files-paths-and-encoding.md`) when a consumer rejects BOM.
+- Files Python writes as `utf-8` have no BOM. In Windows PowerShell 5.1 use `Get-Content -Encoding UTF8`; the default ANSI decoding can corrupt non-ASCII text.
+- Use the BOM-less .NET writer (see [files paths and encoding](files-paths-and-encoding.md)) when a consumer rejects BOM.
+
+For stdout/stderr capture under a Stop error preference, use [direct process capture](native-process-output-capture.md).
 
 ## Artifact routing and cleanup
 

@@ -1,30 +1,31 @@
 # Errors, Exit Codes, and Logging
 
-PowerShell cmdlet errors and native executable failures are different systems. Handle both, and end every task script with one deterministic status line.
+Open when handling PowerShell cmdlet errors, native process status, cleanup, or execution logs in Windows PowerShell 5.1.
 
-## Terminating vs non-terminating errors
+## Terminating and non-terminating errors
 
-- `try`/`catch` catches TERMINATING errors only. Most cmdlet errors are non-terminating by default and sail past `catch`.
-- Escalate per command with `-ErrorAction Stop`, or script-wide with `$ErrorActionPreference = 'Stop'` (scope: current scope and children; the `-ErrorAction` common parameter overrides the preference for that one command - official: about_Preference_Variables, about_CommonParameters).
-- Inside `catch`, `$_` is an ErrorRecord: use `$_.Exception.Message`, `$_.ScriptStackTrace`. Catch specific exception types first: `catch [System.IO.IOException] { ... }`.
-- `finally` always runs - put cleanup and final log lines there.
-- `throw` creates a terminating error; `Write-Error` emits a non-terminating one (and sets `$?` to False for itself only).
+`try`/`catch` catches terminating errors. Use a cmdlet's `-ErrorAction Stop` when a non-terminating error must enter `catch`, or set `$ErrorActionPreference = 'Stop'` for the intended scope. A command's common parameter overrides that preference for the command.
+
+Inside `catch`, `$_` is an ErrorRecord with `Exception.Message` and `ScriptStackTrace`. Put specific exception catches before a general catch. `throw` terminates; `Write-Error` is non-terminating by default but respects error preferences.
+
+This complete input-check template prints a failure and exits nonzero when the required file is absent:
 
 ```powershell
-$ErrorActionPreference = 'Stop'
 try {
     Get-Item -LiteralPath '<REPO_ROOT>\required.file' -ErrorAction Stop | Out-Null
 } catch {
-    Write-TaskLog -Path $logPath -Message ('FAILED_WITH_EVIDENCE missing file: {0}' -f $_.Exception.Message)
+    [Console]::Error.WriteLine(('Missing required file: {0}' -f $_.Exception.Message))
     exit 1
 } finally {
-    Write-TaskLog -Path $logPath -Message 'phase: input-verification finished'
+    Write-Host 'Input-verification phase finished.'
 }
 ```
 
-Caution (practical tip): with `$ErrorActionPreference = 'Stop'`, stderr output from native commands redirected via `2>&1` can surface as NativeCommandError records even on success. Judge native commands by exit code (see `quoting-and-native-commands.md`).
+`finally` runs during normal unwinding, including an `exit` from the try/catch. It is not a guarantee after forced process termination. A cleanup message in `finally` must not claim that the operation succeeded.
 
-## Native exit codes
+## Native failures use a separate contract
+
+For a successfully launched native executable:
 
 ```powershell
 & $exe @argv
@@ -34,11 +35,20 @@ if ($exitCode -ne 0) {
 }
 ```
 
-- Capture `$LASTEXITCODE` immediately; the next native command overwrites it.
-- Known tool contracts: cargo fails with 101; python exits 1 on uncaught exception and 2 on usage error; `python -m py_compile` exits nonzero on syntax errors; npm propagates the script's exit code.
-- Do not claim success from output-file existence when the exit code was nonzero.
+Bind `$exe` to the intended native executable and `$argv` to its arguments before this fragment. Handle command-resolution and process-start failures separately; they cannot be diagnosed by a stale exit code. Cmdlet error preferences do not generally turn native nonzero exit codes into exceptions in 5.1.
 
-## Reusable phase-marker logging pattern (PS 5.1)
+Redirected native stderr can become `NativeCommandError` under `$ErrorActionPreference = 'Stop'` even when the child exits zero. Both `2>&1` and `2> file` can trigger it. Use the [complete direct-process capture example](native-process-output-capture.md) to keep stdout, stderr and exit status separate.
+
+## Tool exit conventions
+
+- Python commonly exits 1 for an uncaught exception and 2 for command-line usage errors. A script may choose other codes with `sys.exit`; check its own contract.
+- `python -m py_compile` returns nonzero for compilation errors and writes bytecode cache files; put those products in the assigned work area.
+- Cargo build documents 0 for success and 101 for failure. npm scripts default to `cmd.exe` on Windows, unless `script-shell` is configured, and failing scripts produce nonzero status.
+- An output left by a previous run cannot establish success for a failed current run.
+
+## Phase logging
+
+This helper requires an existing writable work directory. Its invocation lines illustrate log format; emit final success only after the actual task's checks pass.
 
 ```powershell
 $script:TaskLogPath = Join-Path '<WORK_ROOT>' 'task.log'
@@ -51,9 +61,10 @@ function Write-Phase {
 
 Write-Phase 'START task-name'
 Write-Phase 'PHASE validate-inputs'
-# ... work ...
-Write-Phase ('EXIT tool.exe code={0}' -f $LASTEXITCODE)
-Write-Phase 'STATUS VALIDATED'
 ```
 
-Log: START line, phase markers, input/output paths, external command lines in inspectable form, exit codes, and a final deterministic status. Use deterministic status terms such as `VALIDATED`, `FAILED_WITH_EVIDENCE`, `SKIPPED_BY_SCOPE`, `BLOCKED_WITH_EVIDENCE`, and `NOT_ATTEMPTED` - never vague confidence wording.
+Record inputs, output locations, the selected executable, argument values and captured exit codes. Follow the caller's status schema; labels such as `VALIDATED`, `FAILED_WITH_EVIDENCE`, `SKIPPED_BY_SCOPE`, `BLOCKED_WITH_EVIDENCE` and `NOT_ATTEMPTED` are optional examples, not built-in PowerShell states. Do not label a skipped check as a user preference unless the user actually requested the skip.
+
+## Related
+
+[Native quoting](quoting-and-native-commands.md) · [Output capture](native-process-output-capture.md) · [Validation](validation-and-ast-checks.md) · [Encoding](files-paths-and-encoding.md)

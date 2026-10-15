@@ -11,12 +11,12 @@ $tokens = $null
 $errors = $null
 [System.Management.Automation.Language.Parser]::ParseFile('<WORK_ROOT>\script.ps1', [ref]$tokens, [ref]$errors) | Out-Null
 if ($errors.Count -ne 0) {
-    $errors | ForEach-Object { Write-Error ('{0} at line {1}' -f $_.Message, $_.Extent.StartLineNumber) }
+    $errors | ForEach-Object { [Console]::Error.WriteLine(('{0} at line {1}' -f $_.Message, $_.Extent.StartLineNumber)) }
     exit 1
 }
 ```
 
-List every parse error with its line number; do not stop at the first. A clean parse under `pwsh` proves nothing about 5.1 - run the validator with the target engine.
+List every parse error with its line number; writing diagnostics to Console.Error avoids a Stop preference aborting the diagnostic loop at its first Write-Error. A clean parse under `pwsh` proves nothing about 5.1 - run the validator with the target engine.
 
 ## Smoke checks
 
@@ -26,21 +26,21 @@ After a clean parse, run the cheapest real execution the script supports:
 - `-WhatIf`, dry-run, or plan modes where implemented.
 - A minimal no-op invocation otherwise.
 
-A parse check plus a smoke check catches most generation mistakes before expensive runs.
+Parsing and bounded smoke checks catch syntax and exercised behavior; they do not establish every runtime branch, native argument boundary or output encoding. Use focused fixtures for those contracts. Confirm a no-op/help mode exists before invoking it.
 
 ## JSON and JSONL
 
 ```powershell
-$json = Get-Content -LiteralPath '<REPORTS_ROOT>\out.json' -Raw
+$json = Get-Content -LiteralPath '<REPORTS_ROOT>\out.json' -Raw -Encoding UTF8
 $null = $json | ConvertFrom-Json
 ```
 
 ```powershell
 $lineNo = 0
-Get-Content -LiteralPath '<REPORTS_ROOT>\corpus.jsonl' | ForEach-Object {
+Get-Content -LiteralPath '<REPORTS_ROOT>\records.jsonl' -Encoding UTF8 | ForEach-Object {
     $lineNo += 1
     if ($_.Trim().Length -gt 0) {
-        try { $null = $_ | ConvertFrom-Json } catch { throw ('Invalid JSONL at line {0}' -f $lineNo) }
+        try { $null = $_ | ConvertFrom-Json -ErrorAction Stop } catch { throw ('Invalid JSONL at line {0}' -f $lineNo) }
     }
 }
 ```
@@ -58,4 +58,4 @@ Get-Content -LiteralPath '<REPORTS_ROOT>\corpus.jsonl' | ForEach-Object {
 
 ## What not to validate
 
-Do not run Git commands or claim Git cleanliness unless the user or task explicitly requests Git validation. When skipped on request, state exactly that it was skipped by user preference. Record every skipped validation honestly with its reason.
+Keep validation within the task and repository instructions. These examples do not require Git checks or establish Git cleanliness. If a check was excluded by the user, say so; if it was simply unnecessary or not run, report that actual reason instead of inventing a user preference.

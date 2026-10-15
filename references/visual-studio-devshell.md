@@ -28,8 +28,8 @@ Environment changes inside a child `cmd.exe` DO NOT update the parent PowerShell
 
 ## Discovery without assuming paths
 
-- `<VSINSTALLDIR>` varies by version, edition, and machine: `C:\Program Files\Microsoft Visual Studio\2022\<edition>` (2022) or `C:\Program Files (x86)\Microsoft Visual Studio\2019\<edition>` (2019), where `<edition>` includes `Community`, `Professional`, `Enterprise`, and `BuildTools`.
-- `vswhere.exe` is NOT on PATH by default; its documented install location is `%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe` (included with VS 2017+; also a separate download). Example listing all instances: `vswhere.exe -legacy -prerelease -format json`.
+- `<VSINSTALLDIR>` varies by version, edition and chosen installation directory. Editions and Build Tools can use different Program Files roots. Use the actual `installationPath` from discovery rather than constructing it from a version and product name.
+- `vswhere.exe` need not be on PATH; its documented install location is `%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe` (included with VS 2017+; also a separate download). Example listing all instances: `& $vswhere -products '*' -legacy -prerelease -format json`, where `$vswhere` is the resolved executable path. `-products '*'` includes Build Tools; without it, the default product selection omits that SKU.
 - Build Tools SKUs and components are identified by IDs such as `Microsoft.Component.MSBuild` and the `Microsoft.VisualStudio.Workload.VCTools` workload. vswhere supports filtering by product and required components - see `vswhere -?` for `-products` and `-requires`.
 - Multiple instances/editions can coexist on one machine. Pick one instance explicitly and record which one was used; do not let PATH luck decide.
 - If the repo's instructions provide resolved paths, prefer those over discovery.
@@ -39,8 +39,10 @@ Environment changes inside a child `cmd.exe` DO NOT update the parent PowerShell
 Since Visual Studio 2015, the developer shells set `VSCMD_VER`. The recommended way to detect whether a developer environment is already initialized in the current console is to test whether `VSCMD_VER` is defined:
 
 ```powershell
-if ([string]::IsNullOrWhiteSpace($Env:VSCMD_VER)) { <# load Developer Shell #> }
+$developerEnvironmentLoaded = -not [string]::IsNullOrWhiteSpace($Env:VSCMD_VER)
 ```
+
+`VSCMD_VER` is an initialization marker, not proof of the selected installation, SDK or architecture. Compare the variables below with the intended build before reusing an existing shell.
 
 ## Verification checklist (after loading)
 

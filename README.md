@@ -1,50 +1,57 @@
-# Windows PowerShell 5.1 and Visual Studio Developer Shell Skill
+# PowerShell and Visual Studio Developer Shell
 
-> _Practical guidance for writing, generating, reviewing, and debugging Windows PowerShell 5.1 scripts and Visual Studio Developer Shell workflows in any Windows VS Code repository._
-
-Part of **[Agent Kaizen](https://github.com/DirectorGunner/agent-kaizen)** — Agent Kaizen is designed to support reliable AI agent workflows, context engineering, and AI systems engineering in VS Code, Codex, and Claude Code. Build reusable agent skills, reduce unnecessary context loading, add validation loops, and apply Spec → Verifier → Environment scaffolding to new and existing projects.
-
-This repository is the `powershell-vsdevshell` skill: a reusable, trigger-rich task handbook that an AI coding agent (OpenAI Codex, Claude Code) loads on demand when a task matches its triggers.
-
-## What this skill covers
-
-This skill targets Windows PowerShell 5.1 compatibility and Visual Studio Developer Shell workflows: writing 5.1-safe syntax (avoiding PS7-only ternary, `??`, `&&`/`||` chains, and `ForEach-Object -Parallel`), invoking native executables with the call operator, separate argument arrays, the `--%` stop-parsing token, and capturing `$LASTEXITCODE` rather than `$?`. It handles setup, build, and wrapper scripts that call Python, Cargo, npm, MSBuild, and MSVC, including loading and verifying the Developer Shell (`Launch-VsDevShell.ps1`, `vswhere` discovery, `VSCMD_VER`/`INCLUDE`/`LIB` checks). It also covers embedded Python generation, file/path/encoding handling (UTF-16 LE BOM defaults, BOM-less writers, long paths), stdout/stderr logging, arrays, hashtables, functions, artifact routing, and AST/JSON/exit-code validation before declaring success.
-
-## What's inside
-
-- `SKILL.md` — frontmatter (`name` + trigger-rich `description`) and a lean body.
-- `references/` — right-sized topic files the agent loads only when relevant (plus `INDEX.md` and `topics.json`).
-- `GOTCHA.md` — known pitfalls and edge cases.
-
-## Use it
-
-This skill is one git repo inside the Agent Kaizen **skills store**. The store nests two folders on purpose: the outer **`SKILLS\`** is a VS Code project for building and maintaining skills (its own workspace + tooling), and the inner lowercase **`skills\`** holds every skill as its own repo. That split lets a project pull skills two ways — the **whole `skills\` folder at once** (loads everything — **not recommended**) or **one skill at a time** (recommended: load only what a task needs and stay under Claude Code's skill-listing budget).
-
-Paths below use **`%DEVROOT%`** — the `DEVROOT` environment variable pointing at the folder that contains `SKILLS\`. Set it once by running **`SetDevRoot.cmd`** in the SKILLS repo root (no admin); a new shell then resolves `%DEVROOT%` automatically.
-
-Link **just this skill** (recommended) — a Windows directory junction, no admin:
-
-```cmd
-mklink /J .agents\skills\powershell-vsdevshell  "%DEVROOT%\SKILLS\skills\powershell-vsdevshell"
-mklink /J .claude\skills\powershell-vsdevshell  "%DEVROOT%\SKILLS\skills\powershell-vsdevshell"
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 400
+---
+flowchart LR
+    brand["KAIZEN<br/>SKILL LIBRARY"]:::brand
+    skill("PowerShell<br/>Developer Shell"):::skill
+    scripts(["5.1 Scripting"]):::topic
+    processes(["Native Processes"]):::topic
+    builds(["MSBuild + MSVC"]):::accent
+    brand --- skill
+    skill --- scripts
+    skill --- processes
+    skill --- builds
+    classDef brand fill:#0f172a,color:#67e8f9,stroke:#22d3ee,stroke-width:2px,font-family:monospace
+    classDef skill fill:#172554,color:#eff6ff,stroke:#60a5fa,stroke-width:2px,font-size:20px
+    classDef topic fill:#0c4a6e,color:#bae6fd,stroke:#38bdf8,stroke-width:1px
+    classDef accent fill:#1e293b,color:#fcd34d,stroke:#f59e0b,stroke-width:1px
+    linkStyle default stroke:#38bdf8,stroke-width:1px
 ```
 
-Or link the **whole store** at once (loads every skill — not recommended outside a skills-dev project):
+A focused reference for Windows PowerShell 5.1 scripting and Visual Studio build workflows, covering native process execution, error handling, text encoding and toolchain setup.
 
-```cmd
-mklink /J .agents\skills  "%DEVROOT%\SKILLS\skills"
-mklink /J .claude\skills  "%DEVROOT%\SKILLS\skills"
-```
+Use when writing, generating, reviewing, or debugging Windows PowerShell 5.1 scripts, setup or build wrappers, native executable invocations, Visual Studio Developer Shell setup, MSBuild or MSVC workflows, Python generation, file paths and encoding, logs, reports, or script validation in a Windows repository.
 
-Remove a link (the store copy is untouched):
+## What this skill helps with
 
-```cmd
-rmdir .agents\skills\powershell-vsdevshell
-rmdir .claude\skills\powershell-vsdevshell
-```
+| Task | Useful reference material |
+| --- | --- |
+| Write or repair a Windows PowerShell 5.1 wrapper | Supported syntax, data structures, function output and error handling. |
+| Run Python or another native tool | Quoting, argument boundaries, exit codes and separate stdout/stderr capture. |
+| Prepare a Visual Studio build environment | Installation discovery, Developer Shell initialization and host/target architecture checks. |
+| Invoke MSBuild or MSVC | Configuration, platform switches, compiler discovery and toolchain diagnostics. |
+| Generate scripts, logs or reports | Literal paths, encoding, BOM handling and values passed between languages. |
+| Check a proposed change | Parsing with the intended PowerShell engine, bounded smoke checks and output inspection. |
 
-The agent (OpenAI Codex, Claude Code) then auto-loads this skill whenever a task matches its triggers. Built and validated with **[skill-drafting](https://github.com/DirectorGunner/AI-skill-drafting)** to the Agent Kaizen gold standard.
+## The work behind the references
 
-## License
+The material has been interpreted and organized into task-focused references with descriptive filenames, explicit loading conditions and linked prerequisites. References retain distinctions that matter in automation, including native exit codes versus PowerShell errors, child-process environments versus the calling shell, and file encoding versus console output. Each reference stays within 100 physical lines, including code and navigation.
 
-Licensed under **AGPL-3.0**, matching the [Agent Kaizen](https://github.com/DirectorGunner/agent-kaizen) project.
+## Start here
+
+Open [SKILL.md](SKILL.md) and follow its Context Router, or browse the [reference index](references/INDEX.md) and [topic catalog](references/topics.json). Keep the complete package in the skill location supported by your agent host.
+
+Examples target Windows PowerShell 5.1 and the relevant installed tools. Substitute repository-specific paths and check the documented prerequisites before running them. This is focused scripting and build-wrapper guidance, not a complete PowerShell language or Visual Studio reference. Bundled references are English; [Reference Language Selection](references/languages.md) explains the fallback for other languages.
+
+## Sources and license
+
+Skill reference documentation is interpreted content for use in open source projects. Check against [official documentation sources](https://learn.microsoft.com/en-us/powershell/) when dealing with defects or issues that may come up from interpreting this skill's references.
+
+For build-environment behavior, also consult Microsoft's [Visual Studio Developer Shell documentation](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell).
+
+Licensed under [AGPL-3.0](LICENSE), matching the [Agent Kaizen](https://github.com/LevyBytes/agent-kaizen) project.

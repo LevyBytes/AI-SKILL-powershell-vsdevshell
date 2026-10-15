@@ -2,293 +2,82 @@
   "schema_version": 1,
   "topics": [
     {
-      "id": "ps51_compatibility",
-      "title": "Windows PowerShell 5.1 Compatibility",
-      "file": "references/powershell-5-1-compatibility.md",
-      "applies_to": [
-        "PowerShell scripts",
-        "repo setup scripts",
-        "generated scripts",
-        "Windows compatibility reviews"
-      ],
-      "key_warnings": [
-        "Do not use PowerShell 7-only syntax (ternary, ??, ??=, ?., &&/||, ForEach-Object -Parallel, Join-String)",
-        "Validate with powershell.exe when targeting Windows PowerShell 5.1",
-        "Do not rely on pwsh being installed",
-        "Grouping parentheses reset $? in 5.1"
-      ],
       "topic": "Windows PowerShell 5.1 Compatibility",
-      "summary": "Windows PowerShell 5.1 Compatibility — applies to PowerShell scripts, repo setup scripts, generated scripts.",
-      "keywords": [
-        "PowerShell scripts",
-        "repo setup scripts",
-        "generated scripts",
-        "Windows compatibility reviews"
-      ]
+      "file": "references/powershell-5-1-compatibility.md",
+      "summary": "Open when writing or reviewing Windows PowerShell 5.1 syntax or replacing unsupported PowerShell 7 constructs.",
+      "keywords": ["PowerShell scripts", "repo setup scripts", "generated scripts", "Windows compatibility reviews"]
     },
     {
-      "id": "native_command_quoting",
-      "title": "Quoting and Native Commands",
-      "file": "references/quoting-and-native-commands.md",
-      "applies_to": [
-        "native executable invocation",
-        "quoted tool paths",
-        "argument arrays",
-        "stop-parsing token",
-        "stdout and stderr logging"
-      ],
-      "key_warnings": [
-        "Use the call operator for quoted executable paths",
-        "A quoted command-line string is not a command plus arguments",
-        "Check LASTEXITCODE immediately after native tools",
-        "stderr does not always mean failure"
-      ],
       "topic": "Quoting and Native Commands",
-      "summary": "Quoting and Native Commands — applies to native executable invocation, quoted tool paths, argument arrays.",
-      "keywords": [
-        "native executable invocation",
-        "quoted tool paths",
-        "argument arrays",
-        "stop-parsing token",
-        "stdout and stderr logging"
-      ]
+      "file": "references/quoting-and-native-commands.md",
+      "summary": "Open when invoking native executables with quoted paths, argument arrays, stop-parsing rules, or explicit exit-code handling.",
+      "keywords": ["native executable invocation", "quoted tool paths", "argument arrays", "stop-parsing token", "stdout and stderr logging"]
     },
     {
-      "id": "arrays_hashtables_functions",
-      "title": "Arrays, Hashtables, and Functions",
-      "file": "references/arrays-hashtables-functions.md",
-      "applies_to": [
-        "PowerShell functions",
-        "script data structures",
-        "report object construction",
-        "string join and split"
-      ],
-      "key_warnings": [
-        "PowerShell pipelines enumerate arrays",
-        "+= copies the whole array each time",
-        "Use the -join operator instead of Join-String",
-        "Comparison operators filter arrays - put $null on the left",
-        "Use ordered hashtables when output order matters"
-      ],
+      "topic": "Native Process Output Capture",
+      "file": "references/native-process-output-capture.md",
+      "summary": "Open when capturing native stdout, stderr and exit status independently of PowerShell 5.1 error-stream behavior.",
+      "keywords": ["native process output", "stderr", "exit code"]
+    },
+    {
       "topic": "Arrays, Hashtables, and Functions",
-      "summary": "Arrays, Hashtables, and Functions — applies to PowerShell functions, script data structures, report object construction.",
-      "keywords": [
-        "PowerShell functions",
-        "script data structures",
-        "report object construction",
-        "string join and split"
-      ]
+      "file": "references/arrays-hashtables-functions.md",
+      "summary": "Open when constructing arrays, lists, ordered hashtables, functions, joins, splits, or null comparisons in PowerShell.",
+      "keywords": ["PowerShell functions", "script data structures", "report object construction", "string join and split"]
     },
     {
-      "id": "errors_exit_codes_logging",
-      "title": "Errors, Exit Codes, and Logging",
-      "file": "references/errors-exit-codes-and-logging.md",
-      "applies_to": [
-        "error handling",
-        "task logs",
-        "native process validation",
-        "status reporting"
-      ],
-      "key_warnings": [
-        "try/catch catches terminating errors only - use ErrorAction Stop",
-        "PowerShell errors and native exit codes are separate systems",
-        "Do not treat all stderr as failure",
-        "End with a deterministic status line"
-      ],
       "topic": "Errors, Exit Codes, and Logging",
-      "summary": "Errors, Exit Codes, and Logging — applies to error handling, task logs, native process validation.",
-      "keywords": [
-        "error handling",
-        "task logs",
-        "native process validation",
-        "status reporting"
-      ]
+      "file": "references/errors-exit-codes-and-logging.md",
+      "summary": "Open when handling terminating errors, native exit codes, stderr, logging phases, or final status reporting.",
+      "keywords": ["error handling", "task logs", "native process validation", "status reporting"]
     },
     {
-      "id": "files_paths_encoding",
-      "title": "Files, Paths, and Encoding",
-      "file": "references/files-paths-and-encoding.md",
-      "applies_to": [
-        "file writes",
-        "path handling",
-        "long paths",
-        "artifact routing",
-        "encoding selection"
-      ],
-      "key_warnings": [
-        "Use LiteralPath for literal paths",
-        "Windows PowerShell 5.1 -Encoding UTF8 writes a BOM",
-        "Always pass -Encoding explicitly",
-        "Keep artifact roots short",
-        "Do not put task artifacts inside .agents skills"
-      ],
       "topic": "Files, Paths, and Encoding",
-      "summary": "Files, Paths, and Encoding — applies to file writes, path handling, long paths.",
-      "keywords": [
-        "file writes",
-        "path handling",
-        "long paths",
-        "artifact routing",
-        "encoding selection"
-      ]
+      "file": "references/files-paths-and-encoding.md",
+      "summary": "Open when resolving literal paths, writing text with explicit encoding, handling BOMs or long paths, or routing artifacts.",
+      "keywords": ["file writes", "path handling", "long paths", "artifact routing", "encoding selection"]
     },
     {
-      "id": "visual_studio_devshell",
-      "title": "Visual Studio Developer Shell",
-      "file": "references/visual-studio-devshell.md",
-      "applies_to": [
-        "Visual Studio Developer PowerShell",
-        "Developer Command Prompt",
-        "vswhere discovery",
-        "MSVC environment setup"
-      ],
-      "key_warnings": [
-        "Verify environment variables after loading",
-        "Check VSCMD_VER to detect an initialized shell",
-        "Do not assume vswhere is on PATH - use the Installer folder",
-        "Do not mix Visual Studio versions in one window",
-        "Distinguish PowerShell process updates from child cmd environments"
-      ],
-      "topic": "Visual Studio Developer Shell",
-      "summary": "Visual Studio Developer Shell — applies to Visual Studio Developer PowerShell, Developer Command Prompt, vswhere discovery.",
-      "keywords": [
-        "Visual Studio Developer PowerShell",
-        "Developer Command Prompt",
-        "vswhere discovery",
-        "MSVC environment setup"
-      ]
-    },
-    {
-      "id": "msbuild_msvc_build_tools",
-      "title": "MSBuild and MSVC Build Tools",
-      "file": "references/msbuild-msvc-build-tools.md",
-      "applies_to": [
-        "MSBuild",
-        "MSVC",
-        "cl.exe",
-        "link.exe",
-        "C++ builds"
-      ],
-      "key_warnings": [
-        "Run from a verified developer environment loaded once at the top",
-        "Pass explicit Configuration and Platform",
-        "Quote semicolon lists when calling MSBuild from PowerShell",
-        "Trust exit codes over partial output files"
-      ],
-      "topic": "MSBuild and MSVC Build Tools",
-      "summary": "MSBuild and MSVC Build Tools — applies to MSBuild, MSVC, cl.exe.",
-      "keywords": [
-        "MSBuild",
-        "MSVC",
-        "cl.exe",
-        "link.exe",
-        "C++ builds"
-      ]
-    },
-    {
-      "id": "embedded_python",
-      "title": "Embedded Python in PowerShell",
-      "file": "references/embedded-python-in-powershell.md",
-      "applies_to": [
-        "generated Python",
-        "PowerShell line arrays",
-        "cross-language scripts"
-      ],
-      "key_warnings": [
-        "Avoid accidental PowerShell interpolation - single-quoted line arrays",
-        "Inject values via argv, env, or JSON files, never string interpolation",
-        "Validate with py_compile before running",
-        "Account for the 5.1 BOM with utf-8-sig readers"
-      ],
       "topic": "Embedded Python in PowerShell",
-      "summary": "Embedded Python in PowerShell — applies to generated Python, PowerShell line arrays, cross-language scripts.",
-      "keywords": [
-        "generated Python",
-        "PowerShell line arrays",
-        "cross-language scripts"
-      ]
+      "file": "references/embedded-python-in-powershell.md",
+      "summary": "Open when generating or invoking Python from PowerShell while preserving quoting, value boundaries, encoding, and validation.",
+      "keywords": ["generated Python", "PowerShell line arrays", "cross-language scripts"]
     },
     {
-      "id": "validation_ast_checks",
-      "title": "Validation and AST Checks",
-      "file": "references/validation-and-ast-checks.md",
-      "applies_to": [
-        "syntax checks",
-        "JSON validation",
-        "JSONL validation",
-        "script smoke tests",
-        "output confirmation"
-      ],
-      "key_warnings": [
-        "Use the Windows PowerShell parser under powershell.exe for PS5.1 scripts",
-        "Parse generated JSON and JSONL line by line",
-        "Validate metadata cross-references",
-        "Do not run Git checks unless explicitly requested"
-      ],
+      "topic": "Visual Studio Developer Shell",
+      "file": "references/visual-studio-devshell.md",
+      "summary": "Open when discovering a Visual Studio instance, loading its Developer Shell, selecting architectures, or verifying the environment.",
+      "keywords": ["Visual Studio Developer PowerShell", "Developer Command Prompt", "vswhere discovery", "MSVC environment setup"]
+    },
+    {
+      "topic": "MSBuild and MSVC Build Tools",
+      "file": "references/msbuild-msvc-build-tools.md",
+      "summary": "Open when invoking MSBuild or MSVC with explicit configuration, platform, switches, and verified toolchain state.",
+      "keywords": ["MSBuild", "MSVC", "cl.exe", "link.exe", "C++ builds"]
+    },
+    {
       "topic": "Validation and AST Checks",
-      "summary": "Validation and AST Checks — applies to syntax checks, JSON validation, JSONL validation.",
-      "keywords": [
-        "syntax checks",
-        "JSON validation",
-        "JSONL validation",
-        "script smoke tests",
-        "output confirmation"
-      ]
+      "file": "references/validation-and-ast-checks.md",
+      "summary": "Open when checking PowerShell syntax, generated scripts, JSON or JSONL, smoke-test results, or output artifacts.",
+      "keywords": ["syntax checks", "JSON validation", "JSONL validation", "script smoke tests", "output confirmation"]
     },
     {
-      "id": "vscode_repo_agent_patterns",
-      "title": "VS Code Repository Agent Patterns",
-      "file": "references/vscode-repo-agent-patterns.md",
-      "applies_to": [
-        "agent task setup",
-        "repo convention detection",
-        "artifact routing",
-        "portable skill writing",
-        "source hygiene",
-        "skill metadata maintenance"
-      ],
-      "key_warnings": [
-        "Read repo-local instructions first",
-        "Keep task artifacts out of skill folders",
-        "Use placeholders in reusable docs",
-        "Update topics.json and corpus.jsonl when guidance materially changes"
-      ],
       "topic": "VS Code Repository Agent Patterns",
-      "summary": "VS Code Repository Agent Patterns — applies to agent task setup, repo convention detection, artifact routing.",
-      "keywords": [
-        "agent task setup",
-        "repo convention detection",
-        "artifact routing",
-        "portable skill writing",
-        "source hygiene",
-        "skill metadata maintenance"
-      ]
+      "file": "references/vscode-repo-agent-patterns.md",
+      "summary": "Open when discovering repository instructions, adapting portable path placeholders, or routing work artifacts and reports.",
+      "keywords": ["agent task setup", "repo convention detection", "artifact routing", "source hygiene"]
     },
     {
-      "id": "ps51_pitfalls_checklist",
-      "title": "PowerShell 5.1 Pitfalls Checklist",
-      "file": "references/ps51-pitfalls-checklist.md",
-      "applies_to": [
-        "preflight reviews",
-        "script edits",
-        "generated script validation",
-        "build-wrapper checks"
-      ],
-      "key_warnings": [
-        "Check for PS7-only syntax",
-        "Check native command quoting and exit codes",
-        "Check Developer Shell verification",
-        "Check artifact routing and encoding",
-        "No Git unless requested"
-      ],
       "topic": "PowerShell 5.1 Pitfalls Checklist",
-      "summary": "PowerShell 5.1 Pitfalls Checklist — applies to preflight reviews, script edits, generated script validation.",
-      "keywords": [
-        "preflight reviews",
-        "script edits",
-        "generated script validation",
-        "build-wrapper checks"
-      ]
+      "file": "references/ps51-pitfalls-checklist.md",
+      "summary": "Open when checking PowerShell 5.1 syntax, native invocation, developer tools, encoding, and artifact routing before a change.",
+      "keywords": ["preflight reviews", "script edits", "generated script validation", "build-wrapper checks"]
+    },
+    {
+      "topic": "Reference Language Selection",
+      "file": "references/languages.md",
+      "summary": "Open when you need a language version of this skill's references other than English.",
+      "keywords": ["reference language", "translated references", "language selection"]
     }
   ]
 }

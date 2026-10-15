@@ -1,34 +1,19 @@
-# PowerShell VS Developer Shell References
+# PowerShell and Developer Shell reference index
 
-This reference set supports portable Windows VS Code repository work using Windows PowerShell 5.1 and Visual Studio Developer Shell tooling. It collects curated, field-tested guidance and compact retrieval chunks for agents.
+Choose the script, environment, or validation task.
 
-## Start Here
-
-1. Read `SKILL.md`.
-2. Scan `ps51-pitfalls-checklist.md` before editing or generating any PowerShell.
-3. Read `powershell-5-1-compatibility.md` when writing 5.1-target syntax.
-4. Read `quoting-and-native-commands.md` before invoking native executables.
-5. Read `visual-studio-devshell.md` and `msbuild-msvc-build-tools.md` for Visual Studio, MSVC, or MSBuild work.
-6. Read `errors-exit-codes-and-logging.md` and `files-paths-and-encoding.md` when writing logs, reports, or files.
-7. Read `embedded-python-in-powershell.md` before generating Python from PowerShell.
-8. Read `validation-and-ast-checks.md` before claiming any script change is done.
-9. Read `vscode-repo-agent-patterns.md` before deciding where artifacts go or when updating this skill.
-
-## Topic Files
-
-- `powershell-5-1-compatibility.md`: PS7-only syntax table with 5.1-safe alternatives, `#Requires`, behavior differences, and the AST parse pattern for Windows PowerShell 5.1 Desktop.
-- `quoting-and-native-commands.md`: Safe native invocation - call operator, argument arrays, `--%` stop-parsing token, `$LASTEXITCODE` vs `$?`, stderr semantics, portable tool examples.
-- `arrays-hashtables-functions.md`: Arrays vs List[T], unary comma, `-join`/`-split` operators, ordered dictionaries, array-filtering comparison operators, function and parameter style.
-- `errors-exit-codes-and-logging.md`: Terminating vs non-terminating errors, `-ErrorAction Stop`, try/catch/finally, native exit-code contracts, reusable phase-marker logging, deterministic statuses.
-- `files-paths-and-encoding.md`: Path cmdlets, literal paths, long-path caution, Windows PowerShell 5.1 encoding and BOM behavior, BOM-less UTF-8 escape hatch, artifact routing.
-- `visual-studio-devshell.md`: Launch-VsDevShell.ps1 vs VsDevCmd.bat, architecture arguments, vswhere discovery without PATH assumptions, multi-instance handling, environment verification checklist.
-- `msbuild-msvc-build-tools.md`: MSBuild command-line patterns, PowerShell-specific quoting of switch lists, MSVC environment and architecture verification, build reporting.
-- `embedded-python-in-powershell.md`: Single-quoted line arrays, safe value injection (argv/env/JSON), py_compile validation, Python invocation, encoding in both directions.
-- `validation-and-ast-checks.md`: AST parse with line numbers, smoke checks, JSON/JSONL validation with cross-reference checks, exit-code assertions, output confirmation, no Git unless requested.
-- `vscode-repo-agent-patterns.md`: Detecting repo conventions, placeholder roots, artifact hygiene, skill portability rules, and how to maintain this skill's metadata files.
-- `ps51-pitfalls-checklist.md`: One-page preflight checklist of recurring Windows PowerShell 5.1 mistakes across syntax, native commands, Visual Studio tools, files, and reporting.
-
-## Metadata Files
-
-- `topics.json` maps each topic file to its warnings and applicable work.
-- `corpus.jsonl` is a compact retrieval corpus for future agents. Each line is a standalone JSON chunk referencing a topic id.
+| Topic | Open when | Read |
+| --- | --- | --- |
+| Windows PowerShell 5.1 Compatibility | Open when writing or reviewing Windows PowerShell 5.1 syntax or replacing unsupported PowerShell 7 constructs. | [Windows PowerShell 5.1 Compatibility](powershell-5-1-compatibility.md) |
+| Quoting and Native Commands | Open when invoking native executables with quoted paths, argument arrays, stop-parsing rules, or explicit exit-code handling. | [Quoting and Native Commands](quoting-and-native-commands.md) |
+| Native Process Output Capture | Open when capturing native stdout, stderr and exit status independently of PowerShell 5.1 error-stream behavior. | [Native Process Output Capture](native-process-output-capture.md) |
+| Arrays, Hashtables, and Functions | Open when constructing arrays, lists, ordered hashtables, functions, joins, splits, or null comparisons in PowerShell. | [Arrays, Hashtables, and Functions](arrays-hashtables-functions.md) |
+| Errors, Exit Codes, and Logging | Open when handling terminating errors, native exit codes, stderr, logging phases, or final status reporting. | [Errors, Exit Codes, and Logging](errors-exit-codes-and-logging.md) |
+| Files, Paths, and Encoding | Open when resolving literal paths, writing text with explicit encoding, handling BOMs or long paths, or routing artifacts. | [Files, Paths, and Encoding](files-paths-and-encoding.md) |
+| Visual Studio Developer Shell | Open when discovering a Visual Studio instance, loading its Developer Shell, selecting architectures, or verifying the environment. | [Visual Studio Developer Shell](visual-studio-devshell.md) |
+| MSBuild and MSVC Build Tools | Open when invoking MSBuild or MSVC with explicit configuration, platform, switches, and verified toolchain state. | [MSBuild and MSVC Build Tools](msbuild-msvc-build-tools.md) |
+| Embedded Python in PowerShell | Open when generating or invoking Python from PowerShell while preserving quoting, value boundaries, encoding, and validation. | [Embedded Python in PowerShell](embedded-python-in-powershell.md) |
+| Validation and AST Checks | Open when checking PowerShell syntax, generated scripts, JSON or JSONL, smoke-test results, or output artifacts. | [Validation and AST Checks](validation-and-ast-checks.md) |
+| VS Code Repository Agent Patterns | Open when discovering repository instructions, adapting portable path placeholders, or routing work artifacts and reports. | [VS Code Repository Agent Patterns](vscode-repo-agent-patterns.md) |
+| PowerShell 5.1 Pitfalls Checklist | Open when checking PowerShell 5.1 syntax, native invocation, developer tools, encoding, and artifact routing before a change. | [PowerShell 5.1 Pitfalls Checklist](ps51-pitfalls-checklist.md) |
+| Reference Language Selection | Open when you need a language version of this skill's references other than English. | [Reference Language Selection](languages.md) |

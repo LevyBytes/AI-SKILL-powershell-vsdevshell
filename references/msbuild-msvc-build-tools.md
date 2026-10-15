@@ -1,58 +1,59 @@
 # MSBuild and MSVC Build Tools
 
-Run MSBuild and MSVC from a verified Visual Studio Developer Shell environment unless the task provides fully resolved tool paths and environment variables. Developer Shell setup belongs at the TOP of a build script, once, followed by verification - not sprinkled mid-script and never switched within one shell.
+Open when invoking MSBuild or MSVC with an explicit configuration, architecture and verified Visual Studio toolchain.
 
-## MSBuild command-line patterns
+## MSBuild invocation
 
-Every switch has `-switch` and `/switch` forms; switches are case-insensitive.
+Initialize the selected developer environment before build steps; use [Developer Shell setup](visual-studio-devshell.md). A fully configured build system may provide absolute tool paths and environment settings instead. The project determines valid configuration/platform names.
 
 ```powershell
+$msbuild = (Get-Command msbuild.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
 $msbuildArgs = @(
     '<REPO_ROOT>\Project.sln',
-    '-restore',                    # run Restore target first (NuGet)
-    '-m',                          # parallel: without the switch the default is 1 process
-    '-t:Build',                    # targets; semicolon-separate multiples
+    '-restore',
+    '-m',
+    '-t:Build',
     '-p:Configuration=Release',
     '-p:Platform=x64',
     '-verbosity:minimal',
-    '-bl:<WORK_ROOT>\build.binlog' # binary log for post-mortem analysis
+    '-bl:<WORK_ROOT>\build.binlog'
 )
-& msbuild @msbuildArgs
+& $msbuild @msbuildArgs
 $exitCode = $LASTEXITCODE
-if ($exitCode -ne 0) { throw ('MSBuild failed with exit code {0}' -f $exitCode) }
+if ($exitCode -ne 0) { throw ('MSBuild failed: {0}' -f $exitCode) }
 ```
 
-- `-p:Name=Value` sets project properties; quote the whole element if a value has spaces.
-- From PowerShell (a shell other than cmd), semicolon/comma lists for a switch may need quotes so the shell does not split them.
-- `-targets` (list targets) and `-getProperty:` are non-building diagnostics.
-- Since VS2019 16.5, MSBuild does not take toolset/library selection from the command-line environment; project files and properties control that. The Developer Shell still controls which `msbuild.exe`/tools are on PATH.
+MSBuild accepts case-insensitive `-switch` and `/switch` forms. Without `-m`, the default maximum process count is one. Keep property values and semicolon/comma lists in quoted argument elements so PowerShell passes each switch intact.
 
-## MSVC environment verification
+`-targets` (or `-ts`) lists available targets. MSBuild 17.8 introduced `-getProperty`, `-getItem` and `-getTargetResult`. Property/item queries without requested targets evaluate without a build; adding `-target` or `-getTargetResult` can execute targets. Do not describe every property query as side-effect-free: project evaluation can itself load extensions or evaluate property functions.
 
-x86/x64 host-and-target combinations come from the environment that `VsDevCmd.bat`/`vcvarsall.bat`/`Enter-VsDevShell` set up (`vcvarsall.bat amd64`, `amd64_x86`, etc.). Verify before compiling and verify the ARCHITECTURE matches intent:
+Since Visual Studio 2019 16.5, MSBuild/DEVENV toolset and library selection is controlled by the build configuration rather than simply inheriting a Developer Prompt's selection. The shell still affects executable discovery; direct `cl.exe` invocation depends on the configured environment.
+
+## MSVC environment and real compiler check
+
+Check the selected executable and expected architecture before compiling. `-Arch amd64` is an initialization argument; standard x64 developer environments report `VSCMD_ARG_TGT_ARCH` as `x64`. A defined `VSCMD_VER` alone does not establish the intended installation or architecture.
 
 ```powershell
-& cl.exe /Bv          # compiler banner + version; nonzero/missing means environment problem
-$clExit = $LASTEXITCODE
+$compiler = (Get-Command cl.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
 if ([string]::IsNullOrWhiteSpace($Env:INCLUDE) -or [string]::IsNullOrWhiteSpace($Env:LIB)) {
-    throw 'INCLUDE/LIB are empty: the MSVC environment is not loaded.'
+    throw 'INCLUDE/LIB are empty.'
 }
-if ($Env:VSCMD_ARG_TGT_ARCH -ne 'x64') { throw ('Wrong target arch: {0}' -f $Env:VSCMD_ARG_TGT_ARCH) }
+if ($Env:VSCMD_ARG_TGT_ARCH -ne 'x64') { throw 'Expected an x64 target environment.' }
+$sourcePath = Join-Path '<WORK_ROOT>' 'compiler-check.c'
+$objectPath = Join-Path '<WORK_ROOT>' 'compiler-check.obj'
+Set-Content -LiteralPath $sourcePath -Value 'int main(void) { return 0; }' -Encoding ASCII
+& $compiler /nologo /c $sourcePath ('/Fo{0}' -f $objectPath)
+$compileExit = $LASTEXITCODE
+if ($compileExit -ne 0) { throw ('Compiler check failed: {0}' -f $compileExit) }
+if (-not (Test-Path -LiteralPath $objectPath -PathType Leaf)) { throw 'Object file missing.' }
 ```
 
-If the compiler cannot find standard headers or libraries, fix the environment (reload the correct Developer Shell) rather than hardcoding include/lib paths, unless the build system explicitly requires them.
+Use an existing dedicated work directory; the two `compiler-check` files belong to this fixture. This check compiles C to an object only. It does not test Windows SDK headers, linking, runtime execution, or a complete project. Add those checks when they matter to the task.
 
-## Build reporting
+`cl /Bv` without a source file can emit version details and then fail with a missing-source diagnostic. That nonzero exit code alone does not establish a broken environment. Inspect executable version metadata or provide a real source file when using compiler diagnostic options.
 
-Record in the task log:
+## Reporting and recovery
 
-- Developer environment evidence (`VSCMD_VER`, arch variables, `VCToolsInstallDir`, `WindowsSdkDir`).
-- Selected tool paths (which `msbuild.exe`, which instance).
-- Full command argument lists and exit codes.
-- Output/binary log paths.
+Record the Visual Studio instance, resolved compiler/linker/MSBuild paths, `VSCMD_VER`, architecture variables, `VCToolsInstallDir`, `WindowsSdkDir`, arguments, exit codes and artifact paths. Keep logs in the assigned work area.
 
-Trust exit codes over partial output files: a leftover binary from an earlier build is not success evidence when MSBuild, `cl.exe`, or `link.exe` returned nonzero.
-
-## See also
-
-- [Visual Studio Developer Shell](visual-studio-devshell.md)
+If standard headers or libraries are missing, inspect the selected toolset, SDK and configuration. Start a fresh correctly initialized shell when the environment is wrong. Do not mix installation command files or invent include/library paths to mask a selection problem.
