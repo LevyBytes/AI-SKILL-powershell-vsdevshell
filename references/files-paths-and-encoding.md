@@ -49,13 +49,8 @@ Encoding does not select line endings. If an output requires LF, join lines expl
 
 Practical tip: JSON written by 5.1 (`ConvertTo-Json | Set-Content -Encoding UTF8`) carries a BOM that python `json.loads` rejects when read as plain `utf-8`. Either write BOM-less via .NET, or have Python readers use `encoding='utf-8-sig'` (tolerates BOM presence and absence).
 
-## Artifact routing
+Use the output locations and cleanup rules specified by the caller or repository.
 
-Keep task artifacts in the repository-designated roots:
+## Primary sources
 
-- Prompt archives under `<PROMPTS_ROOT>`.
-- Work scripts, scratch files, and logs under `<WORK_ROOT>`.
-- Reports under `<REPORTS_ROOT>`.
-- Tool outputs under the root assigned by the current task.
-
-Never put generated scripts, logs, reports, prompt archives, source captures, or temp files inside `.agents\skills`. Do not create hardlinks or symlinks unless explicitly authorized.
+[Character encoding](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_character_encoding?view=powershell-5.1) | [Windows path limits](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation)

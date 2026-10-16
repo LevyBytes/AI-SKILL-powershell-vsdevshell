@@ -53,6 +53,8 @@ if ($exitCode -ne 0) { throw ('Generated job failed: {0}' -f $exitCode) }
 
 For stdout/stderr capture under a Stop error preference, use [direct process capture](native-process-output-capture.md).
 
-## Artifact routing and cleanup
+Keep generated scripts and bytecode caches in the caller-designated output location.
 
-Generated Python, its inputs, its logs, and `__pycache__` side effects belong under `<WORK_ROOT>` (or the task-assigned output root) - never inside `.agents\skills` or source folders. Long-running generated scripts should print a START line, phase markers, paths, periodic progress, and a final deterministic status.
+## Primary sources
+
+[PowerShell quoting](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_quoting_rules?view=powershell-5.1) | [Python source compilation](https://docs.python.org/3/library/py_compile.html) | [Python standard-stream encoding](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING)

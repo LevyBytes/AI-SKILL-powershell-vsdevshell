@@ -44,7 +44,7 @@ The material has been interpreted and organized into task-focused references wit
 
 ## Start here
 
-Open [SKILL.md](SKILL.md) and follow its Context Router, or browse the [reference index](references/INDEX.md) and [topic catalog](references/topics.json). Keep the complete package in the skill location supported by your agent host.
+Open [SKILL.md](SKILL.md) and follow its Context Router, or browse the [reference index](references/INDEX.md). Keep the complete package in the skill location supported by your agent host.
 
 Examples target Windows PowerShell 5.1 and the relevant installed tools. Substitute repository-specific paths and check the documented prerequisites before running them. This is focused scripting and build-wrapper guidance, not a complete PowerShell language or Visual Studio reference. Bundled references are English; [Reference Language Selection](references/languages.md) explains the fallback for other languages.
 
@@ -52,6 +52,4 @@ Examples target Windows PowerShell 5.1 and the relevant installed tools. Substit
 
 Skill reference documentation is interpreted content for use in open source projects. Check against [official documentation sources](https://learn.microsoft.com/en-us/powershell/) when dealing with defects or issues that may come up from interpreting this skill's references.
 
-For build-environment behavior, also consult Microsoft's [Visual Studio Developer Shell documentation](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell).
-
-Licensed under [AGPL-3.0](LICENSE), matching the [Agent Kaizen](https://github.com/LevyBytes/agent-kaizen) project.
+Licensed under **AGPL-3.0**; see [LICENSE](LICENSE). Part of the [Agent Kaizen](https://github.com/LevyBytes/agent-kaizen) skill library.

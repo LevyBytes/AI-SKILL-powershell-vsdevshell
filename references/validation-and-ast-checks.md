@@ -28,26 +28,33 @@ After a clean parse, run the cheapest real execution the script supports:
 
 Parsing and bounded smoke checks catch syntax and exercised behavior; they do not establish every runtime branch, native argument boundary or output encoding. Use focused fixtures for those contracts. Confirm a no-op/help mode exists before invoking it.
 
-## JSON and JSONL
+## JSON and JSONL deserialization
+
+These Windows PowerShell 5.1 examples check required input and deserialization. `ConvertFrom-Json` is permissive: success does not establish strict JSON grammar, unique keys, a schema or required application fields. Use a strict parser and application checks when those contracts matter. See [ConvertFrom-Json](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertfrom-json?view=powershell-5.1).
 
 ```powershell
-$json = Get-Content -LiteralPath '<REPORTS_ROOT>\out.json' -Raw -Encoding UTF8
-$null = $json | ConvertFrom-Json
+$json = Get-Content -LiteralPath '<REPORTS_ROOT>\out.json' -Raw -Encoding UTF8 -ErrorAction Stop
+if ([string]::IsNullOrWhiteSpace($json)) { throw 'Required JSON input is empty' }
+try { $null = $json | ConvertFrom-Json -ErrorAction Stop }
+catch { throw ('Cannot deserialize JSON: {0}' -f $_.Exception.Message) }
 ```
 
 ```powershell
-$lineNo = 0
-Get-Content -LiteralPath '<REPORTS_ROOT>\records.jsonl' -Encoding UTF8 | ForEach-Object {
-    $lineNo += 1
-    if ($_.Trim().Length -gt 0) {
-        try { $null = $_ | ConvertFrom-Json -ErrorAction Stop } catch { throw ('Invalid JSONL at line {0}' -f $lineNo) }
+$lines = @(Get-Content -LiteralPath '<REPORTS_ROOT>\records.jsonl' -Encoding UTF8 -ErrorAction Stop)
+if ($lines.Count -eq 0) { throw 'Required JSONL input is empty' }
+for ($index = 0; $index -lt $lines.Count; $index++) {
+    $lineNo = $index + 1
+    if ([string]::IsNullOrWhiteSpace($lines[$index])) {
+        throw ('Empty JSONL record at line {0}' -f $lineNo)
     }
+    try { $null = $lines[$index] | ConvertFrom-Json -ErrorAction Stop }
+    catch { throw ('Cannot deserialize JSONL at line {0}: {1}' -f $lineNo, $_.Exception.Message) }
 }
 ```
 
-- Report the FIRST invalid line number for JSONL - it makes the fix immediate.
-- When metadata files cross-reference each other (ids, file names), validate the references too: every referenced file exists, every referenced id is defined.
-- Practical tip: JSON written by 5.1 with `-Encoding UTF8` carries a BOM; non-PowerShell consumers should read it as `utf-8-sig` or the writer should use the BOM-less .NET pattern.
+Read failures stop before parsing. Exceptions must fail the calling validation step; do not catch them and then report success. These examples reject blank JSONL records, as required by [JSON Lines](https://jsonlines.org/), but retain the parser limits described above.
+
+Validate cross-references and required fields separately. Windows PowerShell 5.1 writes a BOM with `-Encoding UTF8`; use the BOM-less writer in [file encoding](files-paths-and-encoding.md) for strict consumers.
 
 ## Native tools and outputs
 

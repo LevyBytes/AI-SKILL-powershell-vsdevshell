@@ -38,17 +38,18 @@ Before editing or generating Windows PowerShell scripts, check these items.
 
 ## Files and generated scripts
 
-- [ ] Artifacts routed to `<WORK_ROOT>`/`<REPORTS_ROOT>`/`<PROMPTS_ROOT>`; nothing written inside `.agents\skills`.
+- [ ] Output files use the caller-designated paths and cleanup rules.
 - [ ] Encoding passed explicitly on every write; 5.1 `-Encoding UTF8` BOM behavior accounted for (BOM-less .NET writer or `utf-8-sig` readers when needed).
 - [ ] Long-path risk considered; artifact roots kept short.
 - [ ] Generated Python written as single-quoted line arrays; values injected via argv/env/JSON, not interpolation; `py_compile` run.
-- [ ] Generated JSON parses; JSONL parses line by line; cross-references (ids, files) validated.
-- [ ] No hardlinks or symlinks unless explicitly authorized.
+- [ ] Required JSON/JSONL inputs fail on read or conversion errors; strict syntax and schema checks are distinct from PowerShell deserialization.
 
 ## Reporting
 
 - [ ] Validation commands and exit codes recorded.
 - [ ] Skipped checks stated with reasons.
-- [ ] Git validation follows task scope; skips are attributed to the user only when actually requested.
 - [ ] Reusable docs use placeholders instead of project-specific paths.
-- [ ] Final status uses deterministic labels.
+
+## Primary sources
+
+[PowerShell language topics](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about?view=powershell-5.1) | [Developer shells](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=visualstudio)

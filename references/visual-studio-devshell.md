@@ -17,7 +17,7 @@ $launch = '<VSINSTALLDIR>\Common7\Tools\Launch-VsDevShell.ps1'
 
 ## Developer Command Prompt (VsDevCmd.bat / vcvarsall.bat)
 
-`VsDevCmd.bat` is in `<VSINSTALLDIR>\Common7\Tools\`; architecture-specific `vcvars*.bat`/`vcvarsall.bat` are in `<VSINSTALLDIR>\VC\Auxiliary\Build\`. cmd argument forms: `-arch=amd64 -host_arch=amd64`.
+`VsDevCmd.bat` is in `<VSINSTALLDIR>\Common7\Tools\`; architecture-specific `vcvars*.bat`/`vcvarsall.bat` are in `<VSINSTALLDIR>\VC\Auxiliary\Build\`. Their architecture arguments differ: `VsDevCmd.bat -arch=amd64 -host_arch=amd64` selects an x64 host and target; `vcvarsall.bat amd64` selects that native toolchain, while `vcvarsall.bat amd64_arm64` selects an x64 host targeting ARM64. Do not pass VsDevCmd flags to vcvarsall.
 
 ```powershell
 $vsdevcmd = '<VSINSTALLDIR>\Common7\Tools\VsDevCmd.bat'
@@ -56,3 +56,5 @@ Verify and record in the task log - loading is evidence to verify, not a state t
 - `PATH` contains the toolset directories
 
 Treat missing variables or tools as a setup blocker, not as a reason to guess paths. Example values (such as `VSCMD_VER 17.x` with a BuildTools install root) are LOCAL evidence from one machine, never universal assumptions.
+
+Sources: [Developer shells](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=visualstudio) and [vcvarsall syntax and optional SDK/toolset arguments](https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170#vcvarsall-syntax).

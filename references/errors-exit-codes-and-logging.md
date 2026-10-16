@@ -63,8 +63,12 @@ Write-Phase 'START task-name'
 Write-Phase 'PHASE validate-inputs'
 ```
 
-Record inputs, output locations, the selected executable, argument values and captured exit codes. Follow the caller's status schema; labels such as `VALIDATED`, `FAILED_WITH_EVIDENCE`, `SKIPPED_BY_SCOPE`, `BLOCKED_WITH_EVIDENCE` and `NOT_ATTEMPTED` are optional examples, not built-in PowerShell states. Do not label a skipped check as a user preference unless the user actually requested the skip.
+Record the selected executable, non-sensitive arguments, artifact paths and captured exit codes. Redact credentials and sensitive configuration from logs. Use the caller's reporting format.
 
 ## Related
 
 [Native quoting](quoting-and-native-commands.md) · [Output capture](native-process-output-capture.md) · [Validation](validation-and-ast-checks.md) · [Encoding](files-paths-and-encoding.md)
+
+## Primary sources
+
+[Error handling](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_try_catch_finally?view=powershell-5.1) | [Exit status variables](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-5.1)

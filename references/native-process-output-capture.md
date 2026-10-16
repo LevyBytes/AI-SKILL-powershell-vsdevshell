@@ -57,3 +57,7 @@ The explicit UTF-8 contract applies to this Python child. Other tools require th
 ## Related
 
 [Native quoting](quoting-and-native-commands.md) · [Errors and logging](errors-exit-codes-and-logging.md) · [Generated Python](embedded-python-in-powershell.md) · [Encoding](files-paths-and-encoding.md)
+
+## Primary sources
+
+[Process redirected output](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.process.standardoutput?view=netframework-4.7.2) | [ProcessStartInfo arguments](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.arguments?view=netframework-4.7.2)

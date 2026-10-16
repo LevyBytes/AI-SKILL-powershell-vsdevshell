@@ -57,3 +57,7 @@ Use an existing dedicated work directory; the two `compiler-check` files belong 
 Record the Visual Studio instance, resolved compiler/linker/MSBuild paths, `VSCMD_VER`, architecture variables, `VCToolsInstallDir`, `WindowsSdkDir`, arguments, exit codes and artifact paths. Keep logs in the assigned work area.
 
 If standard headers or libraries are missing, inspect the selected toolset, SDK and configuration. Start a fresh correctly initialized shell when the environment is wrong. Do not mix installation command files or invent include/library paths to mask a selection problem.
+
+## Primary sources
+
+[MSBuild switches](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-command-line-reference?view=visualstudio) | [C++ command-line tools](https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170)

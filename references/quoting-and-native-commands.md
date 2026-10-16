@@ -70,3 +70,7 @@ The receiving executable still parses its command line. Stop-parsing does not su
 Capture `$LASTEXITCODE` immediately after a successfully launched native program. `$?` is PowerShell's last-operation status; parentheses, subexpressions and array expressions reset it in 5.1. Scripts do not all update `$LASTEXITCODE` identically; use the invoked script's exit contract.
 
 Stderr may contain progress on a successful run. In 5.1, redirected stderr can become `NativeCommandError` under a Stop preference even with separate output files. Use [direct process output capture](native-process-output-capture.md) when this distinction matters. Do not add stdin piping unless the tool's documented protocol requires it.
+
+## Primary sources
+
+[Quoting rules](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_quoting_rules?view=powershell-5.1) | [Parsing and stop-parsing](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1)

@@ -21,7 +21,7 @@ Choose the reference for the Windows scripting or build task.
 | MSBuild and MSVC Build Tools | Open when invoking MSBuild or MSVC with explicit configuration, platform, switches, and verified toolchain state. | [MSBuild and MSVC Build Tools](references/msbuild-msvc-build-tools.md) |
 | Embedded Python in PowerShell | Open when generating or invoking Python from PowerShell while preserving quoting, value boundaries, encoding, and validation. | [Embedded Python in PowerShell](references/embedded-python-in-powershell.md) |
 | Validation and AST Checks | Open when checking PowerShell syntax, generated scripts, JSON or JSONL, smoke-test results, or output artifacts. | [Validation and AST Checks](references/validation-and-ast-checks.md) |
-| VS Code Repository Agent Patterns | Open when discovering repository instructions, adapting portable path placeholders, or routing work artifacts and reports. | [VS Code Repository Agent Patterns](references/vscode-repo-agent-patterns.md) |
+| VS Code PowerShell Sessions and Tasks | Open when selecting the PowerShell engine in VS Code or configuring task arguments and working directories. | [VS Code PowerShell Sessions and Tasks](references/vscode-powershell-tasks.md) |
 | PowerShell 5.1 Pitfalls Checklist | Open when checking PowerShell 5.1 syntax, native invocation, developer tools, encoding, and artifact routing before a change. | [PowerShell 5.1 Pitfalls Checklist](references/ps51-pitfalls-checklist.md) |
 
 Open the [reference index](references/INDEX.md) or [topic catalog](references/topics.json) when selecting a reference topic.

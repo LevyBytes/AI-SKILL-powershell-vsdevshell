@@ -62,9 +62,9 @@
       "keywords": ["syntax checks", "JSON validation", "JSONL validation", "script smoke tests", "output confirmation"]
     },
     {
-      "topic": "VS Code Repository Agent Patterns",
-      "file": "references/vscode-repo-agent-patterns.md",
-      "summary": "Open when discovering repository instructions, adapting portable path placeholders, or routing work artifacts and reports.",
+      "topic": "VS Code PowerShell Sessions and Tasks",
+      "file": "references/vscode-powershell-tasks.md",
+      "summary": "Open when selecting the PowerShell engine in VS Code or configuring task arguments and working directories.",
       "keywords": ["agent task setup", "repo convention detection", "artifact routing", "source hygiene"]
     },
     {

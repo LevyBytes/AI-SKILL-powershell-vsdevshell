@@ -59,3 +59,7 @@ Run the validator inside `powershell.exe` (for example `& "$Env:windir\System32\
 - Small helper functions, phase-marker logging, deterministic final status line.
 - Placeholders such as `<REPO_ROOT>`, `<WORK_ROOT>`, `<REPORTS_ROOT>` in reusable documentation.
 - ASCII-safe punctuation in generated strings: PowerShell treats smart quotes as quote characters, so copied typographic punctuation can change parsing.
+
+## Primary sources
+
+[Version requirements](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_requires?view=powershell-5.1) | [Changes from Windows PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-7.6)

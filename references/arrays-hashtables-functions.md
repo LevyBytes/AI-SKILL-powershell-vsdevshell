@@ -73,3 +73,7 @@ function Write-TaskLog {
 - Use `-LiteralPath` for paths that may contain wildcard characters.
 - Verb-Noun names with approved verbs for shared functions.
 - Avoid hidden dependence on global variables unless the script intentionally sets shared task state near the top.
+
+## Primary sources
+
+[Arrays](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_arrays?view=powershell-5.1) | [Hashtables](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_hash_tables?view=powershell-5.1) | [Functions](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions?view=powershell-5.1)
