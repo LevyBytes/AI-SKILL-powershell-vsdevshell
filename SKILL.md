@@ -1,8 +1,9 @@
 ---
 name: powershell-vsdevshell
 description: "Use when writing, generating, reviewing, or debugging Windows PowerShell 5.1 scripts, setup or build wrappers, native executable invocations, Visual Studio Developer Shell setup, MSBuild or MSVC workflows, Python generation, file paths and encoding, logs, reports, or script validation in a Windows repository."
+license: Apache-2.0
 metadata:
-  last-updated: "2026-10-09"
+  last-updated: "2026-10-22"
 ---
 
 # Context Router
